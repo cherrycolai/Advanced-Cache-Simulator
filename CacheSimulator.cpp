@@ -26,12 +26,15 @@ CacheSimulator::CacheSimulator(const CacheConfig& cfg) : config(cfg) {
 
     //calculating cache parameters
     block_offset_bits = log2(config.block_size);
-
+    int actual_associativity;
     if (config.associativity == 0) { //if fully associative
         num_sets = 1;
-        config.associativity = config.cache_size / config.block_size;
+        actual_associativity = config.cache_size / config.block_size;
     }
-    else num_sets = config.cache_size / (config.block_size * config.associativity);
+    else { 
+	actual_associativity = config.associativity;
+	num_sets = config.cache_size / (config.block_size * actual_associativity);
+    }
     
     index_bits = log2(num_sets);
     tag_bits = 32 - index_bits - block_offset_bits;
@@ -39,7 +42,7 @@ CacheSimulator::CacheSimulator(const CacheConfig& cfg) : config(cfg) {
     //initializing cache
     cache.resize(num_sets);
     for (int i = 0; i < num_sets; i++) 
-        cache[i].resize(config.associativity);
+        cache[i].resize(actual_associativity);
 }
 
 void CacheSimulator::parseAddress(unsigned long address, unsigned long& tag, int& index) {
@@ -49,7 +52,8 @@ void CacheSimulator::parseAddress(unsigned long address, unsigned long& tag, int
 }
 
 int CacheSimulator::findBlock(int set_index, unsigned long tag) {
-    for (int i = 0; i < config.associativity; i++) {
+    int ways = cache[set_index].size();
+    for (int i = 0; i < ways; i++) {
         if (cache[set_index][i].validBit && cache[set_index][i].tag == tag) {
             return i;
         }
@@ -67,6 +71,7 @@ int CacheSimulator::findEmptyBlock(int set_index) {
 }
 
 int CacheSimulator::selectVictim(int set_index) {
+    int ways = cache[set_index].size();
     if (config.replacement_policy == "LRU") {
         int min_lru = cache[set_index][0].lru_counter;
         int victim = 0;
@@ -90,7 +95,7 @@ int CacheSimulator::selectVictim(int set_index) {
         return victim;
     }
     else { //RANDOM
-        return rand() % config.associativity;
+        return rand() % ways;
     }
 }
 
@@ -204,7 +209,7 @@ void CacheSimulator::printStats() {
 
     long total_misses = load_misses + store_misses;
     double miss_rate = (total_accesses > 0) ? ((double)total_misses / total_accesses) : 0.0;
-    double amat = 1.0 + miss_rate * 100.0;
+    double amat = 1.0 + (miss_rate * 100.0);
 
     cout << "Total loads: " << total_loads << endl;
     cout << "Total stores: " << total_stores << endl;

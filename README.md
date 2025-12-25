@@ -20,12 +20,12 @@ This cache simulator models different cache architectures and measures their per
   
   •  FIFO (First In First Out)
   
-  •  Random
+  •  RANDOM
 
 
 ### Write Policies
 
-  •  Write-back with dirty bit tracking
+  •  Write-back (with dirty bit tracking)
   
   •  Write-through
 
@@ -50,7 +50,7 @@ This cache simulator models different cache architectures and measures their per
 
 
 ## 🛠️ Technologies
-  •  Language: C++17
+  •  Language: C++
   
   •  Libraries: C++ Standard Library only
   
@@ -74,20 +74,19 @@ This cache simulator models different cache architectures and measures their per
 
   •  C++ compiler with C++17 support (g++, clang++, or MSVC)
   
-  •  Make (optional, for using Makefile)
 
 ### Compilation
 
 Manual compilation:
 
-    g++ -std=c++17 -O2 CacheConfig.h CacheConfig.cpp CacheBlock.h CacheBlock.cpp CacheSimulator.h CacheSimulator.cpp cache_sim.cpp -o cache_sim
+    g++ -std=c++17 -O2 CacheConfig.cpp CacheBlock.cpp CacheSimulator.cpp cache_sim.cpp -o cache_sim
 
 Running the Simulator
 
     ./cache_sim config.txt trace.txt
 
 ## 📝 Configuration File Format
-Create a configuration file (e.g., config.txt) with the following format:
+Create a configuration file (config.txt) with the following format:
 
     CACHE_SIZE=4096
     BLOCK_SIZE=16
@@ -99,14 +98,14 @@ Create a configuration file (e.g., config.txt) with the following format:
 
 |Parameter | Description | Valid Values|
 |--------- | ----------- | ------------|
-|CACHE_SIZE | Total cache size in bytes | Power of 2 (e.g., 1024, 4096)|
-|BLOCK_SIZE | Block/line size in bytes | Power of 2 (e.g., 16, 32, 64)|
+|CACHE SIZE | Total cache size in bytes | Power of 2 (1024, 4096)|
+|BLOCK SIZE | Block/line size in bytes | Power of 2 (16, 32, 64)|
 |ASSOCIATIVITY | Cache associativity | 1 (direct-mapped), N (N-way), 0 (fully associative)|
-|REPLACEMENT_POLICY |Replacement algorithm | LRU, FIFO, RANDOM|
-|WRITE_POLICY | Write strategy | WRITE_BACK, WRITE_THROUGH|
-|WRITE_ALLOCATE | Write allocation policy | 1 (write-allocate), 0 (no-write-allocate)|
+|REPLACEMENT POLICY |Replacement algorithm | LRU, FIFO, RANDOM|
+|WRITE POLICY | Write strategy | WRITE BACK, WRITE THROUGH|
+|WRITE ALLOCATE | Write allocation policy | 1 (write-allocate), 0 (no-write-allocate)|
 ## 📊 Trace File Format
-Create a trace file (e.g., trace.txt) with memory access patterns:
+Create a trace file (trace.txt) with memory access patterns:
 
     R 0x0000
     W 0x00A4
